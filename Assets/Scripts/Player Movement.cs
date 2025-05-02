@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private Transform cameraTransform;
     private float xRotation = 0f;
-  
+    private PlatformMove currentPlatform;
 
     void Start()
     {
@@ -26,6 +26,14 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // Mouse Look
+        if (currentPlatform != null && isGrounded)
+        {
+            controller.Move(currentPlatform.DeltaMovement);
+        }
+        else
+        {
+            currentPlatform = null; // reset if not grounded
+        }
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -57,4 +65,14 @@ public class PlayerMovement : MonoBehaviour
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.CompareTag("Platform"))
+        {
+            currentPlatform = hit.collider.GetComponent<PlatformMove>();
+        }
+    }
+    
+    
 }

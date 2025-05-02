@@ -11,19 +11,29 @@ public class PlatformMove : MonoBehaviour
     private Vector3 target;   
     private bool isWaiting = false;
 
-    void Start()
-    {
-        target = pointB.position;
-    }
 
-   
+    public Vector3 DeltaMovement { get; private set; }
+    private Vector3 lastPosition;
+
+
     void Update()
     {
-        
+        DeltaMovement = transform.position - lastPosition;
+        lastPosition = transform.position;
         if (!isWaiting)
         {
             MovePlatform();
         }
+    }
+
+    void FixedUpdate()
+    {
+        DeltaMovement = (transform.position - lastPosition) / Time.fixedDeltaTime;
+        lastPosition = transform.position;
+    }
+    void Start()
+    {
+        target = pointB.position;
     }
 
     void MovePlatform()
