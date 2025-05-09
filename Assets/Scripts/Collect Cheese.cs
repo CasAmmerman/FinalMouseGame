@@ -19,7 +19,7 @@ public class CollectCheese : MonoBehaviour
 
         if (Cheese != null && Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Debug.Log("Pick Up Cheese");
+            
             Debug.Log("Pick Up Cheese");
             PickUpCheese();
         }

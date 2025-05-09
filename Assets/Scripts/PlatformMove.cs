@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections; 
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlatformMove : MonoBehaviour
 {
@@ -15,21 +16,35 @@ public class PlatformMove : MonoBehaviour
     public Vector3 DeltaMovement { get; private set; }
     private Vector3 lastPosition;
 
+    public List<Transform> riders = new List<Transform>();
+
 
     void Update()
     {
-        DeltaMovement = transform.position - lastPosition;
-        lastPosition = transform.position;
-        if (!isWaiting)
-        {
-            MovePlatform();
-        }
+
     }
 
     void FixedUpdate()
     {
-        DeltaMovement = (transform.position - lastPosition) / Time.fixedDeltaTime;
+        //debug your delta move here and make sure it's correct
+        if (!isWaiting)
+        {
+            MovePlatform();
+        }
+
+        DeltaMovement = transform.position - lastPosition;
+        Debug.Log("DeltaMovement: " + DeltaMovement);
+       
+        foreach (Transform t in riders)
+        {   
+            Debug.DrawRay(t.position, DeltaMovement, Color.green);
+            t.position += DeltaMovement; 
+        }
+
+
         lastPosition = transform.position;
+
+
     }
     void Start()
     {
@@ -46,12 +61,35 @@ public class PlatformMove : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        if (!riders.Contains(collision.transform))
+        {
+            riders.Add(collision.transform);
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        riders.Remove(collision.transform);
+    }
+
     IEnumerator WaitAndSwitch()
     {
         isWaiting = true;
         yield return new WaitForSeconds(waitTime);
         target = (target == pointA.position) ? pointB.position : pointA.position;
         isWaiting = false;
+    }
+
+    public void AddRider(Transform t)
+    {
+        riders.Add(t);
+    }
+
+    public void RemoveRider(Transform t)
+    {
+        riders.Remove(t);
     }
 
    
